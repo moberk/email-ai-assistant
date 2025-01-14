@@ -1,0 +1,2000 @@
+{
+    "name": "FullJourney_RAG",
+    "flow": [
+        {
+            "id": 1,
+            "module": "google-email:TriggerNewEmail",
+            "version": 2,
+            "parameters": {
+                "from": "",
+                "text": "",
+                "folder": "[Gmail]/All Mail",
+                "account": 3850424,
+                "subject": "",
+                "criteria": "ALL",
+                "markSeen": true,
+                "maxResults": 3,
+                "searchType": "simple"
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 150
+                },
+                "restore": {
+                    "parameters": {
+                        "folder": {
+                            "path": [
+                                "All Mail",
+                                "All Mail"
+                            ]
+                        },
+                        "account": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google-restricted"
+                            },
+                            "label": "My Google Restricted connection (erick.hernandez@artify.com.mx)"
+                        },
+                        "criteria": {
+                            "label": "All emails"
+                        },
+                        "searchType": {
+                            "label": "Simple filter"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "account",
+                        "type": "account:google-restricted",
+                        "label": "Connection",
+                        "required": true
+                    },
+                    {
+                        "name": "searchType",
+                        "type": "select",
+                        "label": "Filter type",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "simple",
+                                "gmail"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "markSeen",
+                        "type": "boolean",
+                        "label": "Mark email message(s) as read when fetched"
+                    },
+                    {
+                        "name": "maxResults",
+                        "type": "uinteger",
+                        "label": "Maximum number of results",
+                        "required": true
+                    },
+                    {
+                        "name": "folder",
+                        "type": "folder",
+                        "label": "Folder",
+                        "required": true
+                    },
+                    {
+                        "name": "criteria",
+                        "type": "select",
+                        "label": "Criteria",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "ALL",
+                                "SEEN",
+                                "UNSEEN"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "type": "email",
+                        "label": "Sender email address"
+                    },
+                    {
+                        "name": "subject",
+                        "type": "text",
+                        "label": "Subject"
+                    },
+                    {
+                        "name": "text",
+                        "type": "text",
+                        "label": "Search phrase"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "headers",
+                        "spec": [
+                            {
+                                "name": "received",
+                                "type": "text",
+                                "label": "Received"
+                            },
+                            {
+                                "name": "deliveredTo",
+                                "type": "email",
+                                "label": "Delivered-To"
+                            },
+                            {
+                                "name": "xOriginalFrom",
+                                "type": "text",
+                                "label": "X-Original-From"
+                            },
+                            {
+                                "name": "replyTo",
+                                "type": "text",
+                                "label": "Reply-To"
+                            },
+                            {
+                                "name": "messageId",
+                                "type": "email",
+                                "label": "Message ID"
+                            }
+                        ],
+                        "type": "collection",
+                        "label": "Headers - basic"
+                    },
+                    {
+                        "name": "headersList",
+                        "spec": [
+                            {
+                                "name": "key",
+                                "type": "text",
+                                "label": "Key"
+                            },
+                            {
+                                "name": "value",
+                                "type": "text",
+                                "label": "Value"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Headers - list"
+                    },
+                    {
+                        "name": "id",
+                        "type": "number",
+                        "label": "Email ID (UID)"
+                    },
+                    {
+                        "name": "date",
+                        "type": "date",
+                        "label": "Date"
+                    },
+                    {
+                        "name": "subject",
+                        "type": "text",
+                        "label": "Subject"
+                    },
+                    {
+                        "name": "text",
+                        "type": "text",
+                        "label": "Text content"
+                    },
+                    {
+                        "name": "html",
+                        "type": "text",
+                        "label": "HTML content"
+                    },
+                    {
+                        "name": "from",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Sender name"
+                            },
+                            {
+                                "name": "address",
+                                "type": "email",
+                                "label": "Email address"
+                            }
+                        ],
+                        "type": "collection",
+                        "label": "Sender"
+                    },
+                    {
+                        "name": "to",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Recipient name"
+                            },
+                            {
+                                "name": "address",
+                                "type": "email",
+                                "label": "Email address"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Recipient"
+                    },
+                    {
+                        "name": "cc",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Recipient name"
+                            },
+                            {
+                                "name": "address",
+                                "type": "email",
+                                "label": "Email address"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Copy recipients"
+                    },
+                    {
+                        "name": "bcc",
+                        "spec": [
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Recipient name"
+                            },
+                            {
+                                "name": "address",
+                                "type": "email",
+                                "label": "Email address"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Blind copy recipients"
+                    },
+                    {
+                        "name": "attachments",
+                        "spec": [
+                            {
+                                "name": "contentType",
+                                "type": "text",
+                                "label": "MIME type"
+                            },
+                            {
+                                "name": "fileName",
+                                "type": "filename",
+                                "label": "File name",
+                                "semantic": "file:name"
+                            },
+                            {
+                                "name": "fileSize",
+                                "type": "number",
+                                "label": "File size"
+                            },
+                            {
+                                "name": "contentId",
+                                "type": "text",
+                                "label": "Content-ID"
+                            },
+                            {
+                                "name": "data",
+                                "type": "buffer",
+                                "label": "Data",
+                                "semantic": "file:data"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Attachments"
+                    },
+                    {
+                        "name": "labels",
+                        "type": "array",
+                        "label": "Labels"
+                    },
+                    {
+                        "name": "xGmMsgid",
+                        "type": "text",
+                        "label": "X-GM-MSGID"
+                    },
+                    {
+                        "name": "messageId",
+                        "type": "text",
+                        "label": "Gmail Message ID"
+                    },
+                    {
+                        "name": "threadId",
+                        "type": "text",
+                        "label": "Thread ID"
+                    },
+                    {
+                        "name": "messageLink",
+                        "type": "url",
+                        "label": "Message Link"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "openai-gpt-3:messageAssistantAdvanced",
+            "version": 1,
+            "parameters": {
+                "__IMTCONN__": 3849379
+            },
+            "filter": {
+                "name": "FilterReplies",
+                "conditions": [
+                    [
+                        {
+                            "a": "{{1.subject}}",
+                            "b": "re:",
+                            "o": "text:notcontain:ci"
+                        }
+                    ]
+                ]
+            },
+            "mapper": {
+                "role": "user",
+                "message": "Asunto: {{{1.subject}}}\nCuerpo: {{{1.text}}}\n\nEn base al contenido anterior, ¿el correo es una pregunta frecuente (FAQ) o se clasifica como OTRO?",
+                "assistantId": "asst_NYvO2Udja8n0ulMBeb06DXL5"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 150
+                },
+                "restore": {
+                    "expect": {
+                        "role": {
+                            "label": "User"
+                        },
+                        "model": {
+                            "mode": "chose"
+                        },
+                        "tools": {
+                            "mode": "chose"
+                        },
+                        "image_urls": {
+                            "mode": "chose"
+                        },
+                        "assistantId": {
+                            "mode": "chose",
+                            "label": "EmailClassifier (gpt-3.5-turbo)",
+                            "nested": []
+                        },
+                        "image_files": {
+                            "mode": "chose"
+                        },
+                        "tool_choice": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "response_format": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "truncation_strategy": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "file_search_resources": {
+                            "mode": "chose"
+                        },
+                        "code_interpreter_resources": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "openai-gpt-3"
+                            },
+                            "label": "Embed_sheets_contextRAG"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:openai-gpt-3",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "assistantId",
+                        "type": "select",
+                        "label": "Assistant",
+                        "required": true
+                    },
+                    {
+                        "name": "role",
+                        "type": "select",
+                        "label": "Role",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "user",
+                                "assistant"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "threadId",
+                        "type": "text",
+                        "label": "Thread ID"
+                    },
+                    {
+                        "name": "model",
+                        "type": "select",
+                        "label": "Model"
+                    },
+                    {
+                        "name": "tools",
+                        "type": "select",
+                        "label": "Tools",
+                        "multiple": true,
+                        "validate": {
+                            "enum": [
+                                "file_search",
+                                "code_interpreter"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "file_search_resources",
+                        "type": "select",
+                        "label": "File Search Resources"
+                    },
+                    {
+                        "name": "code_interpreter_resources",
+                        "type": "select",
+                        "label": "Code Interpreter Resources",
+                        "multiple": true,
+                        "validate": {
+                            "maxItems": 20
+                        }
+                    },
+                    {
+                        "name": "tool_choice",
+                        "type": "select",
+                        "label": "Tool Choice",
+                        "validate": {
+                            "enum": [
+                                "none",
+                                "auto",
+                                "required",
+                                "file_search",
+                                "code_interpreter",
+                                "function"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "instructions",
+                        "type": "text",
+                        "label": "Instructions"
+                    },
+                    {
+                        "name": "max_prompt_tokens",
+                        "type": "uinteger",
+                        "label": "Max Prompt Tokens"
+                    },
+                    {
+                        "name": "max_completion_tokens",
+                        "type": "uinteger",
+                        "label": "Max Completion Tokens"
+                    },
+                    {
+                        "name": "temperature",
+                        "type": "number",
+                        "label": "Temperature",
+                        "validate": {
+                            "max": 2,
+                            "min": 0
+                        }
+                    },
+                    {
+                        "name": "top_p",
+                        "type": "number",
+                        "label": "Top P",
+                        "validate": {
+                            "max": 1,
+                            "min": 0
+                        }
+                    },
+                    {
+                        "name": "response_format",
+                        "type": "select",
+                        "label": "Response Format",
+                        "validate": {
+                            "enum": [
+                                "auto",
+                                "json_object",
+                                "text"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "truncation_strategy",
+                        "type": "select",
+                        "label": "Truncation Strategy",
+                        "validate": {
+                            "enum": [
+                                "auto",
+                                "last_messages"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "message",
+                        "type": "text",
+                        "label": "Message",
+                        "required": true
+                    },
+                    {
+                        "name": "image_files",
+                        "type": "select",
+                        "label": "Image Files",
+                        "multiple": true
+                    },
+                    {
+                        "name": "image_urls",
+                        "spec": {
+                            "name": "value",
+                            "type": "url",
+                            "label": "Image URL",
+                            "required": true
+                        },
+                        "type": "array",
+                        "label": "Image URLs"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "result",
+                        "type": "any",
+                        "label": "Result"
+                    },
+                    {
+                        "name": "id",
+                        "type": "text",
+                        "label": "Message ID"
+                    },
+                    {
+                        "name": "object",
+                        "type": "text",
+                        "label": "Object"
+                    },
+                    {
+                        "name": "created_at",
+                        "type": "date",
+                        "label": "Created At"
+                    },
+                    {
+                        "name": "assistant_id",
+                        "type": "text",
+                        "label": "Assistant ID"
+                    },
+                    {
+                        "name": "thread_id",
+                        "type": "text",
+                        "label": "Thread ID"
+                    },
+                    {
+                        "name": "run_id",
+                        "type": "text",
+                        "label": "Run ID"
+                    },
+                    {
+                        "name": "role",
+                        "type": "text",
+                        "label": "Role"
+                    },
+                    {
+                        "name": "content",
+                        "spec": {
+                            "spec": [
+                                {
+                                    "name": "type",
+                                    "type": "text",
+                                    "label": "Type"
+                                },
+                                {
+                                    "name": "text",
+                                    "spec": [
+                                        {
+                                            "name": "value",
+                                            "type": "text",
+                                            "label": "Value"
+                                        },
+                                        {
+                                            "name": "annotations",
+                                            "spec": [
+                                                {
+                                                    "name": "type",
+                                                    "type": "text",
+                                                    "label": "Type"
+                                                },
+                                                {
+                                                    "name": "text",
+                                                    "type": "text",
+                                                    "label": "Text"
+                                                },
+                                                {
+                                                    "name": "start_index",
+                                                    "type": "uinteger",
+                                                    "label": "Start Index"
+                                                },
+                                                {
+                                                    "name": "end_index",
+                                                    "type": "uinteger",
+                                                    "label": "End Index"
+                                                },
+                                                {
+                                                    "name": "file_citation",
+                                                    "spec": [
+                                                        {
+                                                            "name": "file_id",
+                                                            "type": "text",
+                                                            "label": "File ID"
+                                                        }
+                                                    ],
+                                                    "type": "collection",
+                                                    "label": "File Citation"
+                                                }
+                                            ],
+                                            "type": "array",
+                                            "label": "Annotations"
+                                        }
+                                    ],
+                                    "type": "collection",
+                                    "label": "Text"
+                                }
+                            ],
+                            "type": "collection"
+                        },
+                        "type": "array",
+                        "label": "Content"
+                    },
+                    {
+                        "name": "attachments",
+                        "type": "array",
+                        "label": "Attachments"
+                    },
+                    {
+                        "name": "metadata",
+                        "spec": [],
+                        "type": "collection",
+                        "label": "Metadata"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "mapper": null,
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 150
+                }
+            },
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 6,
+                            "module": "google-email:ActionModifyLabelsApi",
+                            "version": 2,
+                            "parameters": {
+                                "account": 3850424
+                            },
+                            "filter": {
+                                "name": "Other",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{2.result}}",
+                                            "b": "Otro",
+                                            "o": "text:equal:ci"
+                                        }
+                                    ],
+                                    [
+                                        {
+                                            "a": "{{2.result}}",
+                                            "b": "other",
+                                            "o": "text:equal"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "mapper": {
+                                "messageId": "{{1.messageId}}",
+                                "addLabelIds": [
+                                    "Label_1420282131001227580"
+                                ],
+                                "removeLabelIds": []
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": 0
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "addLabelIds": {
+                                            "mode": "chose",
+                                            "label": [
+                                                "InboundCases/Other"
+                                            ]
+                                        },
+                                        "removeLabelIds": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "account": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "google-restricted"
+                                            },
+                                            "label": "My Google Restricted connection (erick.hernandez@artify.com.mx)"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "account",
+                                        "type": "account:google-restricted",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "messageId",
+                                        "type": "text",
+                                        "label": "Gmail Message ID",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "addLabelIds",
+                                        "type": "select",
+                                        "label": "Labels to add",
+                                        "multiple": true
+                                    },
+                                    {
+                                        "name": "removeLabelIds",
+                                        "type": "select",
+                                        "label": "Labels to remove",
+                                        "multiple": true
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 10,
+                            "module": "google-email:ActionCreateDraft",
+                            "version": 2,
+                            "parameters": {
+                                "account": 3850424
+                            },
+                            "mapper": {
+                                "cc": [],
+                                "to": [
+                                    "{{1.from.address}}"
+                                ],
+                                "bcc": [],
+                                "html": "Hola {{1.from.name}},Gracias por ponerte en contacto con nosotros.\n\nPara brindarte una asistencia más rápida y personalizada a tu solicitud, te invitamos a utilizar nuestro chat en línea en https://derechovirtual.org/. Allí, uno de nuestros asesores podrá ayudarte directamente con tu solicitud. ¡Gracias por tu confianza en Derecho Virtual! Saludos cordiales.",
+                                "folder": "[Gmail]/Drafts",
+                                "subject": "re: {{1.subject}}",
+                                "attachments": []
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1200,
+                                    "y": 0
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "cc": {
+                                            "mode": "chose"
+                                        },
+                                        "to": {
+                                            "mode": "chose",
+                                            "items": [
+                                                null
+                                            ]
+                                        },
+                                        "bcc": {
+                                            "mode": "chose"
+                                        },
+                                        "folder": {
+                                            "mode": "chose",
+                                            "path": [
+                                                "Drafts"
+                                            ]
+                                        },
+                                        "attachments": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "account": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "google-restricted"
+                                            },
+                                            "label": "My Google Restricted connection (erick.hernandez@artify.com.mx)"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "account",
+                                        "type": "account:google-restricted",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "folder",
+                                        "type": "folder",
+                                        "label": "Folder",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "to",
+                                        "spec": {
+                                            "name": "value",
+                                            "type": "email",
+                                            "label": "Email address",
+                                            "required": true
+                                        },
+                                        "type": "array",
+                                        "label": "To"
+                                    },
+                                    {
+                                        "name": "subject",
+                                        "type": "text",
+                                        "label": "Subject"
+                                    },
+                                    {
+                                        "name": "html",
+                                        "type": "text",
+                                        "label": "Content"
+                                    },
+                                    {
+                                        "name": "attachments",
+                                        "spec": [
+                                            {
+                                                "name": "fileName",
+                                                "type": "filename",
+                                                "label": "File name",
+                                                "required": true,
+                                                "semantic": "file:name"
+                                            },
+                                            {
+                                                "name": "data",
+                                                "type": "buffer",
+                                                "label": "Data",
+                                                "required": true,
+                                                "semantic": "file:data"
+                                            }
+                                        ],
+                                        "type": "array",
+                                        "label": "Attachments"
+                                    },
+                                    {
+                                        "name": "cc",
+                                        "spec": {
+                                            "name": "value",
+                                            "type": "email",
+                                            "label": "Email address",
+                                            "required": true
+                                        },
+                                        "type": "array",
+                                        "label": "Copy recipient"
+                                    },
+                                    {
+                                        "name": "bcc",
+                                        "spec": {
+                                            "name": "value",
+                                            "type": "email",
+                                            "label": "Email address",
+                                            "required": true
+                                        },
+                                        "type": "array",
+                                        "label": "Blind copy recipient"
+                                    }
+                                ],
+                                "interface": [
+                                    {
+                                        "name": "id",
+                                        "type": "number",
+                                        "label": "Email ID (UID)"
+                                    },
+                                    {
+                                        "name": "messageId",
+                                        "type": "text",
+                                        "label": "Message ID"
+                                    },
+                                    {
+                                        "name": "xGmMsgid",
+                                        "type": "text",
+                                        "label": "X-GM-MSGID"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 7,
+                            "module": "google-email:ActionModifyLabelsApi",
+                            "version": 2,
+                            "parameters": {
+                                "account": 3850424
+                            },
+                            "filter": {
+                                "name": "FAQ",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{2.result}}",
+                                            "b": "FAQ",
+                                            "o": "text:equal"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "mapper": {
+                                "messageId": "{{1.messageId}}",
+                                "addLabelIds": [
+                                    "Label_8498026173306641287"
+                                ],
+                                "removeLabelIds": []
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": 300
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "addLabelIds": {
+                                            "mode": "chose",
+                                            "label": [
+                                                "InboundCases/FAQ"
+                                            ]
+                                        },
+                                        "removeLabelIds": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "account": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "google-restricted"
+                                            },
+                                            "label": "My Google Restricted connection (erick.hernandez@artify.com.mx)"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "account",
+                                        "type": "account:google-restricted",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "messageId",
+                                        "type": "text",
+                                        "label": "Gmail Message ID",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "addLabelIds",
+                                        "type": "select",
+                                        "label": "Labels to add",
+                                        "multiple": true
+                                    },
+                                    {
+                                        "name": "removeLabelIds",
+                                        "type": "select",
+                                        "label": "Labels to remove",
+                                        "multiple": true
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 23,
+                            "module": "util:SetVariable2",
+                            "version": 1,
+                            "parameters": {},
+                            "mapper": {
+                                "name": "Email_variable",
+                                "scope": "roundtrip",
+                                "value": "Sender: {{1.from.name}}\nSubject:{{1.subject}}\nEmail_content: {{1.text}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1268,
+                                    "y": 305
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "scope": {
+                                            "label": "One cycle"
+                                        }
+                                    }
+                                },
+                                "expect": [
+                                    {
+                                        "name": "name",
+                                        "type": "text",
+                                        "label": "Variable name",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "scope",
+                                        "type": "select",
+                                        "label": "Variable lifetime",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "roundtrip",
+                                                "execution"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "value",
+                                        "type": "any",
+                                        "label": "Variable value"
+                                    }
+                                ],
+                                "interface": [
+                                    {
+                                        "name": "Email_variable",
+                                        "type": "any",
+                                        "label": "Email_variable"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 22,
+                            "module": "util:SetVariable2",
+                            "version": 1,
+                            "parameters": {},
+                            "mapper": {
+                                "name": "json_safe_qterms",
+                                "scope": "roundtrip",
+                                "value": "{{replace(replace(replace(replace(replace(replace(replace(23.Email_variable; \"/\\n/g\"; space); \"/\\r/g\"; space); \"/\\t/g\"; space); \"/\\f/g\"; space); \"/\\//g\"; \"/\"); \"/\\\\/g\"; \"\\\\\"); \"/\"\"/g\"; \"\\\"\"\")}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1568,
+                                    "y": 305
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "scope": {
+                                            "label": "One cycle"
+                                        }
+                                    }
+                                },
+                                "expect": [
+                                    {
+                                        "name": "name",
+                                        "type": "text",
+                                        "label": "Variable name",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "scope",
+                                        "type": "select",
+                                        "label": "Variable lifetime",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "roundtrip",
+                                                "execution"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "value",
+                                        "type": "any",
+                                        "label": "Variable value"
+                                    }
+                                ],
+                                "interface": [
+                                    {
+                                        "name": "json_safe_qterms",
+                                        "type": "any",
+                                        "label": "json_safe_qterms"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 17,
+                            "module": "openai-gpt-3:makeApiCall",
+                            "version": 1,
+                            "parameters": {
+                                "__IMTCONN__": 3849379
+                            },
+                            "mapper": {
+                                "url": "/v1/embeddings",
+                                "body": "{\"input\": \"{{22.json_safe_qterms}}\",\"model\": \"text-embedding-3-small\",\"encoding_format\": \"float\"}",
+                                "method": "POST",
+                                "headers": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ]
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1981,
+                                    "y": 304
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "qs": {
+                                            "mode": "chose"
+                                        },
+                                        "method": {
+                                            "mode": "chose",
+                                            "label": "POST"
+                                        },
+                                        "headers": {
+                                            "mode": "chose",
+                                            "items": [
+                                                null
+                                            ]
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "openai-gpt-3"
+                                            },
+                                            "label": "Embed_sheets_contextRAG"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:openai-gpt-3",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "url",
+                                        "type": "text",
+                                        "label": "URL",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "method",
+                                        "type": "select",
+                                        "label": "Method",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "GET",
+                                                "POST",
+                                                "PUT",
+                                                "PATCH",
+                                                "DELETE"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "headers",
+                                        "spec": {
+                                            "name": "value",
+                                            "spec": [
+                                                {
+                                                    "name": "key",
+                                                    "type": "text",
+                                                    "label": "Key"
+                                                },
+                                                {
+                                                    "name": "value",
+                                                    "type": "text",
+                                                    "label": "Value"
+                                                }
+                                            ],
+                                            "type": "collection",
+                                            "label": "Header"
+                                        },
+                                        "type": "array",
+                                        "label": "Headers"
+                                    },
+                                    {
+                                        "name": "qs",
+                                        "spec": {
+                                            "name": "value",
+                                            "spec": [
+                                                {
+                                                    "name": "key",
+                                                    "type": "text",
+                                                    "label": "Key"
+                                                },
+                                                {
+                                                    "name": "value",
+                                                    "type": "text",
+                                                    "label": "Value"
+                                                }
+                                            ],
+                                            "type": "collection",
+                                            "label": "Query String"
+                                        },
+                                        "type": "array",
+                                        "label": "Query String"
+                                    },
+                                    {
+                                        "name": "body",
+                                        "type": "any",
+                                        "label": "Body"
+                                    }
+                                ],
+                                "interface": [
+                                    {
+                                        "name": "body",
+                                        "type": "any",
+                                        "label": "Body"
+                                    },
+                                    {
+                                        "name": "headers",
+                                        "type": "collection",
+                                        "label": "Headers"
+                                    },
+                                    {
+                                        "name": "statusCode",
+                                        "type": "number",
+                                        "label": "Status code"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 18,
+                            "module": "pinecone:searchIds",
+                            "version": 1,
+                            "parameters": {
+                                "__IMTCONN__": 3850738
+                            },
+                            "mapper": {
+                                "limit": "5",
+                                "vector": "{{17.body.data[].embedding}}",
+                                "sparseVector": {},
+                                "includeMetadata": true
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 2400,
+                                    "y": 300
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "vector": {
+                                            "mode": "edit"
+                                        },
+                                        "filterType": {
+                                            "label": "Empty"
+                                        },
+                                        "sparseVector": {
+                                            "nested": {
+                                                "values": {
+                                                    "mode": "chose"
+                                                },
+                                                "indices": {
+                                                    "mode": "chose"
+                                                }
+                                            }
+                                        },
+                                        "includeValues": {
+                                            "mode": "chose"
+                                        },
+                                        "includeMetadata": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "pinecone"
+                                            },
+                                            "label": "RAG-connection"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:pinecone",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "vector",
+                                        "spec": {
+                                            "name": "value",
+                                            "type": "number",
+                                            "label": "Value"
+                                        },
+                                        "type": "array",
+                                        "label": "Vector"
+                                    },
+                                    {
+                                        "name": "id",
+                                        "type": "text",
+                                        "label": "Vector ID"
+                                    },
+                                    {
+                                        "name": "namespace",
+                                        "type": "text",
+                                        "label": "Namespace"
+                                    },
+                                    {
+                                        "name": "filterType",
+                                        "type": "select",
+                                        "label": "Filter Type",
+                                        "validate": {
+                                            "enum": [
+                                                "simple",
+                                                "custom"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "includeValues",
+                                        "type": "boolean",
+                                        "label": "Include Values"
+                                    },
+                                    {
+                                        "name": "includeMetadata",
+                                        "type": "boolean",
+                                        "label": "Include Metadata"
+                                    },
+                                    {
+                                        "name": "sparseVector",
+                                        "spec": [
+                                            {
+                                                "name": "indices",
+                                                "spec": {
+                                                    "name": "value",
+                                                    "type": "integer",
+                                                    "label": "Index"
+                                                },
+                                                "type": "array",
+                                                "label": "Indices"
+                                            },
+                                            {
+                                                "name": "values",
+                                                "spec": {
+                                                    "name": "value",
+                                                    "type": "number",
+                                                    "label": "Value"
+                                                },
+                                                "type": "array",
+                                                "label": "Values"
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "Sparse Vector"
+                                    },
+                                    {
+                                        "name": "limit",
+                                        "type": "uinteger",
+                                        "label": "Limit",
+                                        "required": true
+                                    }
+                                ],
+                                "interface": [
+                                    {
+                                        "name": "__IMTLENGTH__",
+                                        "type": "uinteger",
+                                        "label": "Total number of bundles"
+                                    },
+                                    {
+                                        "name": "__IMTINDEX__",
+                                        "type": "uinteger",
+                                        "label": "Bundle order position"
+                                    },
+                                    {
+                                        "name": "id",
+                                        "type": "text",
+                                        "label": "Vector ID"
+                                    },
+                                    {
+                                        "name": "score",
+                                        "type": "number",
+                                        "label": "Score"
+                                    },
+                                    {
+                                        "name": "values",
+                                        "spec": {
+                                            "type": "number"
+                                        },
+                                        "type": "array",
+                                        "label": "Values"
+                                    },
+                                    {
+                                        "name": "sparseValues",
+                                        "spec": [
+                                            {
+                                                "name": "indices",
+                                                "spec": {
+                                                    "type": "number"
+                                                },
+                                                "type": "array",
+                                                "label": "Indices"
+                                            },
+                                            {
+                                                "name": "values",
+                                                "spec": {
+                                                    "type": "number"
+                                                },
+                                                "type": "array",
+                                                "label": "Values"
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "Sparse Values"
+                                    },
+                                    {
+                                        "name": "metadata",
+                                        "spec": [],
+                                        "type": "collection",
+                                        "label": "Metadata"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 20,
+                            "module": "builtin:BasicAggregator",
+                            "version": 1,
+                            "parameters": {
+                                "feeder": 18
+                            },
+                            "mapper": {
+                                "id": "{{18.id}}",
+                                "score": "{{18.score}}",
+                                "metadata": "{{18.metadata}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 2700,
+                                    "y": 300
+                                },
+                                "restore": {
+                                    "extra": {
+                                        "feeder": {
+                                            "label": "Pinecone - Query Vectors [18]"
+                                        },
+                                        "target": {
+                                            "label": "Custom"
+                                        }
+                                    }
+                                },
+                                "interface": [
+                                    {
+                                        "name": "array",
+                                        "spec": [
+                                            {
+                                                "name": "id",
+                                                "type": "text",
+                                                "label": "Vector ID"
+                                            },
+                                            {
+                                                "name": "score",
+                                                "type": "number",
+                                                "label": "Score"
+                                            },
+                                            {
+                                                "name": "metadata",
+                                                "spec": [],
+                                                "type": "collection",
+                                                "label": "Metadata"
+                                            }
+                                        ],
+                                        "type": "array",
+                                        "label": "Array"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 19,
+                            "module": "json:TransformToJSON",
+                            "version": 1,
+                            "parameters": {
+                                "space": ""
+                            },
+                            "mapper": {
+                                "object": "{{20.array}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 3000,
+                                    "y": 300
+                                },
+                                "restore": {
+                                    "parameters": {
+                                        "space": {
+                                            "label": "Empty"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "space",
+                                        "type": "select",
+                                        "label": "Indentation",
+                                        "validate": {
+                                            "enum": [
+                                                "tab",
+                                                "2",
+                                                "4"
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "object",
+                                        "type": "any",
+                                        "label": "Object"
+                                    }
+                                ],
+                                "interface": [
+                                    {
+                                        "name": "json",
+                                        "type": "text",
+                                        "label": "JSON string"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 24,
+                            "module": "openai-gpt-3:messageAssistantAdvanced",
+                            "version": 1,
+                            "parameters": {
+                                "__IMTCONN__": 3849379
+                            },
+                            "mapper": {
+                                "role": "user",
+                                "message": "Your task Use{\nsender_name:{{1.from}}, \nsubject:{{1.subject}}, \nemail_content:{{1.text}},\n pinecone_vector_matched:{{19.json}}} variables to formulate your response.\nExtract exact phrases from the 'pinecone_vector_matched' content with the highest score. If the content is insufficient, respond with: 'I'm sorry, but I don't have sufficient information to provide an accurate response at the moment.\n\ndeliver your answer in the same language that {{1.text}} is written.",
+                                "assistantId": "asst_J4Ks5MzJyNbLP9IpoBjkzYTK"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 3412,
+                                    "y": 291
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "role": {
+                                            "label": "User"
+                                        },
+                                        "model": {
+                                            "mode": "chose",
+                                            "label": "Empty"
+                                        },
+                                        "tools": {
+                                            "mode": "chose"
+                                        },
+                                        "image_urls": {
+                                            "mode": "chose"
+                                        },
+                                        "assistantId": {
+                                            "mode": "chose",
+                                            "label": "EmailResponder_FaqBot (gpt-4o)",
+                                            "nested": []
+                                        },
+                                        "image_files": {
+                                            "mode": "chose"
+                                        },
+                                        "tool_choice": {
+                                            "mode": "chose",
+                                            "label": "Empty"
+                                        },
+                                        "response_format": {
+                                            "mode": "chose",
+                                            "label": "Empty"
+                                        },
+                                        "truncation_strategy": {
+                                            "mode": "chose",
+                                            "label": "Empty"
+                                        },
+                                        "file_search_resources": {
+                                            "mode": "chose",
+                                            "label": "Empty"
+                                        },
+                                        "code_interpreter_resources": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "openai-gpt-3"
+                                            },
+                                            "label": "Embed_sheets_contextRAG"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:openai-gpt-3",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "assistantId",
+                                        "type": "select",
+                                        "label": "Assistant",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "role",
+                                        "type": "select",
+                                        "label": "Role",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "user",
+                                                "assistant"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "threadId",
+                                        "type": "text",
+                                        "label": "Thread ID"
+                                    },
+                                    {
+                                        "name": "model",
+                                        "type": "select",
+                                        "label": "Model"
+                                    },
+                                    {
+                                        "name": "tools",
+                                        "type": "select",
+                                        "label": "Tools",
+                                        "multiple": true,
+                                        "validate": {
+                                            "enum": [
+                                                "file_search",
+                                                "code_interpreter"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "file_search_resources",
+                                        "type": "select",
+                                        "label": "File Search Resources"
+                                    },
+                                    {
+                                        "name": "code_interpreter_resources",
+                                        "type": "select",
+                                        "label": "Code Interpreter Resources",
+                                        "multiple": true,
+                                        "validate": {
+                                            "maxItems": 20
+                                        }
+                                    },
+                                    {
+                                        "name": "tool_choice",
+                                        "type": "select",
+                                        "label": "Tool Choice",
+                                        "validate": {
+                                            "enum": [
+                                                "none",
+                                                "auto",
+                                                "required",
+                                                "file_search",
+                                                "code_interpreter",
+                                                "function"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "instructions",
+                                        "type": "text",
+                                        "label": "Instructions"
+                                    },
+                                    {
+                                        "name": "max_prompt_tokens",
+                                        "type": "uinteger",
+                                        "label": "Max Prompt Tokens"
+                                    },
+                                    {
+                                        "name": "max_completion_tokens",
+                                        "type": "uinteger",
+                                        "label": "Max Completion Tokens"
+                                    },
+                                    {
+                                        "name": "temperature",
+                                        "type": "number",
+                                        "label": "Temperature",
+                                        "validate": {
+                                            "max": 2,
+                                            "min": 0
+                                        }
+                                    },
+                                    {
+                                        "name": "top_p",
+                                        "type": "number",
+                                        "label": "Top P",
+                                        "validate": {
+                                            "max": 1,
+                                            "min": 0
+                                        }
+                                    },
+                                    {
+                                        "name": "response_format",
+                                        "type": "select",
+                                        "label": "Response Format",
+                                        "validate": {
+                                            "enum": [
+                                                "auto",
+                                                "json_object",
+                                                "text"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "truncation_strategy",
+                                        "type": "select",
+                                        "label": "Truncation Strategy",
+                                        "validate": {
+                                            "enum": [
+                                                "auto",
+                                                "last_messages"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "message",
+                                        "type": "text",
+                                        "label": "Message",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "image_files",
+                                        "type": "select",
+                                        "label": "Image Files",
+                                        "multiple": true
+                                    },
+                                    {
+                                        "name": "image_urls",
+                                        "spec": {
+                                            "name": "value",
+                                            "type": "url",
+                                            "label": "Image URL",
+                                            "required": true
+                                        },
+                                        "type": "array",
+                                        "label": "Image URLs"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 21,
+                            "module": "google-email:ActionCreateDraft",
+                            "version": 2,
+                            "parameters": {
+                                "account": 3850424
+                            },
+                            "mapper": {
+                                "cc": [],
+                                "to": [
+                                    "{{1.from.address}}"
+                                ],
+                                "bcc": [],
+                                "html": "{{24.result}}",
+                                "folder": "[Gmail]/Drafts",
+                                "subject": "re:{{1.subject}}",
+                                "attachments": []
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 3830,
+                                    "y": 293
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "cc": {
+                                            "mode": "chose"
+                                        },
+                                        "to": {
+                                            "mode": "chose",
+                                            "items": [
+                                                null
+                                            ]
+                                        },
+                                        "bcc": {
+                                            "mode": "chose"
+                                        },
+                                        "folder": {
+                                            "mode": "chose",
+                                            "path": [
+                                                "Drafts",
+                                                "Drafts"
+                                            ]
+                                        },
+                                        "attachments": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "account": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "google-restricted"
+                                            },
+                                            "label": "My Google Restricted connection (erick.hernandez@artify.com.mx)"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "account",
+                                        "type": "account:google-restricted",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "folder",
+                                        "type": "folder",
+                                        "label": "Folder",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "to",
+                                        "spec": {
+                                            "name": "value",
+                                            "type": "email",
+                                            "label": "Email address",
+                                            "required": true
+                                        },
+                                        "type": "array",
+                                        "label": "To"
+                                    },
+                                    {
+                                        "name": "subject",
+                                        "type": "text",
+                                        "label": "Subject"
+                                    },
+                                    {
+                                        "name": "html",
+                                        "type": "text",
+                                        "label": "Content"
+                                    },
+                                    {
+                                        "name": "attachments",
+                                        "spec": [
+                                            {
+                                                "name": "fileName",
+                                                "type": "filename",
+                                                "label": "File name",
+                                                "required": true,
+                                                "semantic": "file:name"
+                                            },
+                                            {
+                                                "name": "data",
+                                                "type": "buffer",
+                                                "label": "Data",
+                                                "required": true,
+                                                "semantic": "file:data"
+                                            }
+                                        ],
+                                        "type": "array",
+                                        "label": "Attachments"
+                                    },
+                                    {
+                                        "name": "cc",
+                                        "spec": {
+                                            "name": "value",
+                                            "type": "email",
+                                            "label": "Email address",
+                                            "required": true
+                                        },
+                                        "type": "array",
+                                        "label": "Copy recipient"
+                                    },
+                                    {
+                                        "name": "bcc",
+                                        "spec": {
+                                            "name": "value",
+                                            "type": "email",
+                                            "label": "Email address",
+                                            "required": true
+                                        },
+                                        "type": "array",
+                                        "label": "Blind copy recipient"
+                                    }
+                                ],
+                                "interface": [
+                                    {
+                                        "name": "id",
+                                        "type": "number",
+                                        "label": "Email ID (UID)"
+                                    },
+                                    {
+                                        "name": "messageId",
+                                        "type": "text",
+                                        "label": "Message ID"
+                                    },
+                                    {
+                                        "name": "xGmMsgid",
+                                        "type": "text",
+                                        "label": "X-GM-MSGID"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "us1.make.com"
+    }
+}
